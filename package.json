@@ -1,0 +1,17 @@
+{
+  "name": "@scale-social/sdk",
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "ScaleSocialSdk.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./index.js"
+  }
+}
+
