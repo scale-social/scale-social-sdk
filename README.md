@@ -14,6 +14,7 @@ npm install @scale-social/sdk
 import { ScaleSocialSdk } from "@scale-social/sdk";
 
 const sdk = new ScaleSocialSdk({
+  baseUrl: "url"  
   apiKey: "key",
 });
 

@@ -13,6 +13,10 @@
   ],
   "exports": {
     ".": "./index.js"
+  },
+  "scripts": {
+    "publish:dev": "node scripts/publish.cjs dev",
+    "publish:prod": "node scripts/publish.cjs prod"
   }
 }
 

@@ -12,23 +12,11 @@
  */
 
 export class ScaleSocialSdk {
-    constructor({apiKey, devEnv} = {}) {
+    constructor({apiKey, baseUrl} = {}) {
         if (!apiKey) throw new Error("apiKey is required");
+        if (!baseUrl) throw new Error("baseUrl is required");
         this.apiKey = apiKey;
-        this.devEnv = devEnv || "";
-        this.baseUrl = ScaleSocialSdk.resolveBaseUrl(this.devEnv);
-    }
-
-    static resolveBaseUrl(devEnv) {
-        const env = (devEnv || "").toLowerCase().trim();
-        if (env === "local") {
-            return "http://127.0.0.1:5001/scale-social-dev/us-central1/";
-        }
-        if (env === "dev") {
-            return "https://us-central1-scale-social-dev.cloudfunctions.net/";
-        }
-        // prod default
-        return "https://us-central1-scale-social-84c7e.cloudfunctions.net/";
+        this.baseUrl = baseUrl;
     }
 
     async _post(functionName, payload) {
