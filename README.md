@@ -1,17 +1,17 @@
-# @scale-social/sdk
+# @scale-social/sdk-dev
 
 JavaScript SDK for Scale Social integrations.
 
 ## Install
 
 ```bash
-npm install @scale-social/sdk
+npm install @scale-social/sdk-dev
 ```
 
 ## Usage
 
 ```js
-import { ScaleSocialSdk } from "@scale-social/sdk";
+import { ScaleSocialSdk } from "@scale-social/sdk-dev";
 
 const sdk = new ScaleSocialSdk({
   baseUrl: "url"  
