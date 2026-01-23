@@ -1,6 +1,6 @@
 {
-  "name": "@scale-social/sdk-dev",
-  "version": "0.1.4.1",
+  "name": "@scale-social/sdk",
+  "version": "0.1.5",
   "private": false,
   "license": "UNLICENSED",
   "type": "module",
@@ -19,8 +19,8 @@
     ".": "./index.js"
   },
   "scripts": {
-    "publish:dev": "node scripts/publish.cjs dev",
-    "publish:prod": "node scripts/publish.cjs prod"
+    "set:dev": "node scripts/publish.cjs dev",
+    "set:prod": "node scripts/publish.cjs prod"
   }
 }
 
