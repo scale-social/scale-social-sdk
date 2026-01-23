@@ -1,6 +1,7 @@
 {
-  "name": "@scale-social/sdk",
+  "name": "@scale-social/sdk-dev",
   "version": "0.1.0",
+  "private": false,
   "license": "UNLICENSED",
   "type": "module",
   "main": "./index.js",
