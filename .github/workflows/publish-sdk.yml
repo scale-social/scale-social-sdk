@@ -18,6 +18,7 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
           always-auth: false
-          
+
+      - run: npm whoami    
       - run: npm ci
       - run: npm publish --access public
