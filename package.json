@@ -5,6 +5,10 @@
   "license": "UNLICENSED",
   "type": "module",
   "main": "./index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scale-social/scale-social-sdk"
+  },
   "files": [
     "index.js",
     "ScaleSocialSdk.js",
