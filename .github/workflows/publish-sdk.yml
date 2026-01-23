@@ -18,6 +18,5 @@ jobs:
           node-version: '20'
           always-auth: false
 
-      - run: npm whoami    
       - run: npm ci
       - run: npm publish --access public --provenance
