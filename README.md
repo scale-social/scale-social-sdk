@@ -18,58 +18,92 @@ const sdk = new ScaleSocialSdk({
   apiKey: "key",
 });
 
-const handleUpload = async () => {
-  const result = await sdk.initialUpload({
-    locationId: "id",
-    uid: "uid",
-    assets: [{ url: "url" }],
-    nonPii: { petName: "Buddy", location: "Austin, TX", dts: Date.now() },
-    // additionalEvaluation: {
-    //   isEnabled: true,
-    //   evaluationType: "is_puppy",
-    //   specifications: ["puppy", "white", "labrador", "black"],
-    //   evaluationOptions: ["highly_likely", "likely", "unlikely", "highly_unlikely"],
-    // }
-  });
-  console.log(result);
-};
+const initialUploadResult = await sdk.initialUpload({
+  locationId: "<locationId>",
+  uid: "<user id>",
+  assets: [{ url: "<asset url>" }],
+  nonPii: {
+    petName: "Buddy",
+    source: "campaign-123",
+    sessionId: "abc-456",
+  },
+  // additionalEvaluation: {
+  //  isEnabled: true,
+  //   evaluationType: "is_puppy",
+  //   specifications: ["puppy", "white", "labrador", "black"],
+  //   evaluationOptions: ["highly_likely", "likely", "unlikely", "highly_unlikely"],
+  // },
+});
 
-const handleManualEvaluation = async () => {
-  const result = await sdk.addManualEvaluation({
-    updates: [
-      // {
-      //   uploadId: "id",
-      //   manualEvaluation: {
-      //     evaluationType: "is_puppy",
-      //     evaluation: "present",
-      //     specifications: ["puppy", "cute", "black", "labrador"],
-      //   },
-      // },
-      {
-        uploadId: "id",
-        manualEvaluation: {
-          evaluationType: "is_puppy",
-          evaluation: "not present",
-          specifications: ["dog", "doleful"],
-        },
+console.log(initialUploadResult);
+// {
+//   data: {
+//     submissionId: "<submissionId>",
+//     uploads: [
+//       {
+//         additionalEvaluation: {
+//           is_puppy: {
+//             evaluation: "likely" | "unlikely",
+//             specifications: ["puppy", "white", "labrador", "black"] | []
+//           }
+//         },
+//         autoRejectCode: 0,
+//         downloadUrl: "<processed asset url>",
+//         evaluationFeedback: "<feedback text>",
+//         evaluationReason: "<reason text>",
+//         evaluationScore: <score>,
+//         filePath: "<storage file path>",
+//         uploadId: "<uploadId>"
+//       }
+//     ]
+//   }
+// }
+
+// Use this value for manual review:
+// initialUploadResult.data.uploads[0].uploadId
+
+const manualEvaluationResult = await sdk.addManualEvaluation({
+  updates: [
+    {
+      uploadId: initialUploadResult.data.uploads[0].uploadId,
+      manualEvaluation: {
+        evaluationType: "is_puppy",
+        evaluation: "not present",
+        specifications: ["dog", "doleful"],
       },
-    ],
-  });
-  console.log(result);
-};
+    },
+  ],
+});
+
+console.log(manualEvaluationResult);
+// {
+//   data: [
+//     {
+//       additionalEvaluation: {
+//         is_puppy: {
+//           evaluation: "likely" | "unlikely",
+//           manualEvaluation: "present" | "not present",
+//           manualSpecifications: ["dog", "doleful"],
+//           specifications: ["puppy", "black", "labrador"]
+//         }
+//       },
+//       uploadId: "<uploadId>"
+//     }
+//   ]
+// }
 ```
 
 ### SDK methods
 
-- `sdk.initialUpload(payload)` → `sdkInitialUpload` Cloud Function (POST)
-- `sdk.addManualEvaluation(payload)` → `sdkManualEvaluation` Cloud Function (POST)
+- `sdk.initialUpload(payload)` → `sdkInitialUpload` SDK helper method
+- `sdk.addManualEvaluation(payload)` → `sdkManualEvaluation` SDK helper method
 
 ## API Endpoints
 
 All SDK endpoints are authenticated via an API key and expect `Content-Type: application/json`.
 Send the key in one of these headers: `x-ssai-api-key`, `x-api-key`, `x-ssai-key`, or `Authorization: Bearer <apiKey>`.
 
-### POST `/sdk/initial-upload`
+### POST `/sdkInitialUploadHttp`
 
 Uploads assets (URLs or base64), runs the CGC pipeline, and returns upload metadata.
 
@@ -89,9 +123,9 @@ Uploads assets (URLs or base64), runs the CGC pipeline, and returns upload metad
   },
   "additionalEvaluation": {
     "isEnabled": true,
-    "evaluationType": "adverse_event",
-    "specifications": ["blood", "injury"],
-    "evaluationOptions": ["present", "not_present"]
+    "evaluationType": "is_puppy",
+    "specifications": ["puppy", "white", "labrador", "black"],
+    "evaluationOptions": ["highly_likely", "likely", "unlikely", "highly_unlikely"]
   }
 }
 ```
@@ -118,30 +152,26 @@ Uploads assets (URLs or base64), runs the CGC pipeline, and returns upload metad
     "submissionId": "sdk_<brandParentId>_<id>",
     "uploads": [
       {
-        "uploadId": "abcd1234",
-        "autoRejectCode": 0,
-        "evaluationScore": 82,
-        "evaluationReason": "",
-        "evaluationFeedback": "",
-        "filePath": "brands/<brandParentId>/<locationId>/sdk/<file>",
-        "downloadUrl": "https://...",
         "additionalEvaluation": {
-          "adverse_event": {
-            "evaluation": "present",
-            "evaluationScore": 0,
-            "evaluationReason": "",
-            "evaluationFeedback": "",
-            "manualEvaluation": "",
-            "manualSpecifications": []
+          "is_puppy": {
+            "evaluation": "likely | unlikely",
+            "specifications": ["puppy", "white", "labrador", "black"]
           }
-        }
+        },
+        "autoRejectCode": 0,
+        "downloadUrl": "<processed asset url>",
+        "evaluationFeedback": "<feedback text>",
+        "evaluationReason": "<reason text>",
+        "evaluationScore": "<score>",
+        "filePath": "<storage file path>",
+        "uploadId": "<uploadId>"
       }
     ]
   }
 }
 ```
 
-### POST `/sdk/manual-evaluation`
+### POST `/sdkManualEvaluationHttp`
 
 Overrides or sets `additionalEvaluation` on existing uploads.
 
@@ -153,9 +183,9 @@ Overrides or sets `additionalEvaluation` on existing uploads.
     {
       "uploadId": "abcd1234",
       "manualEvaluation": {
-        "evaluationType": "adverse_event",
-        "evaluation": "present",
-        "specifications": ["blood", "injury"]
+        "evaluationType": "is_puppy",
+        "evaluation": "not present",
+        "specifications": ["dog", "doleful"]
       }
     }
   ]
@@ -165,7 +195,7 @@ Overrides or sets `additionalEvaluation` on existing uploads.
 #### Field details
 
 - `updates` (array, required): Up to 500 updates per request.
-  - `uploadId` (string, required)
+  - `uploadId` (string, required) [from `data.uploads[i].uploadId` in the results of /sdkInitialUploadHttp, not the `submissionId`.]
   - `manualEvaluation` (object, required)
     - `evaluationType` (string, required): Alphanumeric/underscore only.
     - `evaluation` (string, required): Manual evaluation label.
@@ -176,7 +206,17 @@ Overrides or sets `additionalEvaluation` on existing uploads.
 ```json
 {
   "data": [
-    { "uploadId": "abcd1234", "additionalEvaluation": { "...": {} } },
+    {
+      "uploadId": "abcd1234",
+      "additionalEvaluation": {
+        "is_puppy": {
+          "evaluation": "likely",
+          "manualEvaluation": "not present",
+          "manualSpecifications": ["dog", "doleful"],
+          "specifications": ["puppy", "black", "labrador"]
+        }
+      }
+    },
     { "uploadId": "wxyz9876", "error": "Upload not found" }
   ]
 }

@@ -40,9 +40,10 @@ export class ScaleSocialSdk {
     /**
      * @param {Object} payload
      * @param {string} payload.uid - randomized UID (no PII)
+     * @param {string} payload.locationId - Scale Social location ID for the SDK client
      * @param {Array<{url?: string, base64?: string, filename?: string}>} payload.assets
      * @param {Object} [payload.nonPii]
-     * @param {string} [payload.requestId] - optional idempotency key
+     * @returns {Promise<{data: {submissionId: string, uploads: Array<{uploadId: string, autoRejectCode: number, evaluationScore: number, evaluationReason: string, evaluationFeedback: string, filePath: string, downloadUrl: string, additionalEvaluation: Object}>}}>}
      */
     async initialUpload(payload) {
         return await this._post("sdkInitialUpload", payload);
@@ -53,6 +54,7 @@ export class ScaleSocialSdk {
      *
      * @param {Object} payload
      * @param {Array<{uploadId: string, manualEvaluation: {evaluationType: string, evaluation: string, specifications?: string[]}}>} payload.updates
+     * @returns {Promise<{data: Array<{uploadId: string, additionalEvaluation?: Object, error?: string}>}>}
      */
     async addManualEvaluation(payload) {
         return await this._post("sdkManualEvaluation", payload);
