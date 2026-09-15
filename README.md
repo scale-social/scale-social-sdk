@@ -1,17 +1,17 @@
-# @scale-social/sdk
+# @scale-social/sdk-dev
 
 JavaScript SDK for Scale Social integrations.
 
 ## Install
 
 ```bash
-npm install @scale-social/sdk
+npm install @scale-social/sdk-dev
 ```
 
 ## Usage
 
 ```js
-import { ScaleSocialSdk } from "@scale-social/sdk";
+import { ScaleSocialSdk } from "@scale-social/sdk-dev";
 
 const sdk = new ScaleSocialSdk({
   baseUrl: "url"  
@@ -221,3 +221,36 @@ Overrides or sets `additionalEvaluation` on existing uploads.
   ]
 }
 ```
+
+## Agent API (read-only metrics and assets)
+
+The `@scale-social/sdk-dev/agent` entry wraps the Scale Social Agent API: brands, locations, app-usage metrics and UGC assets for agents and integrations. Keys start with `ssk_` and are issued in Scale Studio → Admin → Client Settings → API access (brand keys) or Admin → Agent API Keys (internal keys).
+
+| Environment | Base URL |
+|---|---|
+| dev (the `-dev` package) | `https://us-central1-scale-social-dev.cloudfunctions.net/agentApi` |
+| production | `https://us-central1-scale-social-84c7e.cloudfunctions.net/agentApi` |
+
+```js
+import { ScaleSocialAgentApi } from "@scale-social/sdk-dev/agent";
+
+const api = new ScaleSocialAgentApi({
+  baseUrl: "<base URL from the table above>",
+  apiKey: "ssk_...",
+});
+
+const brands = await api.listBrands();
+const metrics = await api.getMetrics("cgcSessions", { brandParentId: brands[0].brandParentId, granularity: "day" });
+const page = await api.searchAssets({ brandParentId: brands[0].brandParentId, gradeMin: 75, limit: 25 });
+const download = await api.getAssetDownloadUrl(page.assets[0].id, { variant: "preview" });
+```
+
+Methods: `me()`, `listBrands()`, `listLocations(brandParentId)`, `listMetricSets()`, `getMetrics(metricSet, params)`, `searchAssets(params)`, `iterateAssets(params)` (async iterator over every page), `getAsset(assetId)`, `getAssetDownloadUrl(assetId, options)`. Failures throw `ScaleSocialAgentApiError` with `code`, `status` and `message` from the API's error envelope.
+
+MCP clients connect to `api.mcpUrl` (`<baseUrl>/mcp`) with the same key as `Authorization: Bearer`. From Claude Code:
+
+```bash
+claude mcp add --transport http scale-social <baseUrl>/mcp --header "Authorization: Bearer ssk_..."
+```
+
+The OpenAPI document is at `<baseUrl>/v1/openapi.json`.
