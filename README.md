@@ -1,17 +1,17 @@
-# @scale-social/sdk-dev
+# @scale-social/sdk
 
 JavaScript SDK for Scale Social integrations.
 
 ## Install
 
 ```bash
-npm install @scale-social/sdk-dev
+npm install @scale-social/sdk
 ```
 
 ## Usage
 
 ```js
-import { ScaleSocialSdk } from "@scale-social/sdk-dev";
+import { ScaleSocialSdk } from "@scale-social/sdk";
 
 const sdk = new ScaleSocialSdk({
   baseUrl: "url"  
@@ -224,7 +224,7 @@ Overrides or sets `additionalEvaluation` on existing uploads.
 
 ## Agent API (read-only metrics and assets)
 
-The `@scale-social/sdk-dev/agent` entry wraps the Scale Social Agent API: brands, locations, app-usage metrics and UGC assets for agents and integrations. Keys start with `ssk_` and are issued in Scale Studio → Admin → Client Settings → API access (brand keys) or Admin → Agent API Keys (internal keys).
+The `@scale-social/sdk/agent` entry wraps the Scale Social Agent API: brands, locations, app-usage metrics and UGC assets for agents and integrations. Keys start with `ssk_` and are issued in Scale Studio → Admin → Client Settings → API access (brand keys) or Admin → Agent API Keys (internal keys).
 
 | Environment | Base URL |
 |---|---|
@@ -232,7 +232,7 @@ The `@scale-social/sdk-dev/agent` entry wraps the Scale Social Agent API: brands
 | production | `https://us-central1-scale-social-84c7e.cloudfunctions.net/agentApi` |
 
 ```js
-import { ScaleSocialAgentApi } from "@scale-social/sdk-dev/agent";
+import { ScaleSocialAgentApi } from "@scale-social/sdk/agent";
 
 const api = new ScaleSocialAgentApi({
   baseUrl: "<base URL from the table above>",
